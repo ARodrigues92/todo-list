@@ -54,7 +54,7 @@ const toDoFactorty = (
   let complete = iComplete;
 
   // Public Methods
-  const getData = () => {
+  const getTodoData = () => {
     return [
       id,
       title,
@@ -67,7 +67,7 @@ const toDoFactorty = (
     ];
   };
 
-  const setData = (
+  const setTodoData = (
     newTitle,
     newDescription,
     newDueDate,
@@ -85,7 +85,7 @@ const toDoFactorty = (
     complete = state;
   };
 
-  return { getData, setData, setCompletion };
+  return { getTodoData, setTodoData, setCompletion };
 };
 
 export { projectFactory, toDoFactorty };

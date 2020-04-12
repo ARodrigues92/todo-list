@@ -21,4 +21,10 @@ const displayTodoForm = () => {
   show(todoInputs);
 };
 
-export { displayProjectForm, displayTodoForm };
+const resetFormDisplay = () => {
+  hide(todoInputs);
+  hide(formContainer);
+  show(buttonsContainer);
+};
+
+export { displayProjectForm, displayTodoForm, resetFormDisplay };
