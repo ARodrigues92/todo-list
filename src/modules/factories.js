@@ -17,7 +17,7 @@ const projectFactory = (iId, iTitle, iDescription, iCreationDate, iDueDate) => {
   };
 
   const getProjectData = () => {
-    return [id, title, description, creationDate, dueDate];
+    return { id, title, description, creationDate, dueDate };
   };
 
   const setProjectData = (newTitle, newDescription, newDueDate) => {
@@ -54,8 +54,8 @@ const toDoFactorty = (
   let complete = iComplete;
 
   // Public Methods
-  const getTodoData = () => {
-    return [
+  const getToDoData = () => {
+    return {
       id,
       title,
       description,
@@ -64,10 +64,10 @@ const toDoFactorty = (
       priority,
       notes,
       complete,
-    ];
+    };
   };
 
-  const setTodoData = (
+  const setToDoData = (
     newTitle,
     newDescription,
     newDueDate,
@@ -85,7 +85,7 @@ const toDoFactorty = (
     complete = state;
   };
 
-  return { getTodoData, setTodoData, setCompletion };
+  return { getToDoData, setToDoData, setCompletion };
 };
 
 export { projectFactory, toDoFactorty };

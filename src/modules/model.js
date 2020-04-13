@@ -17,4 +17,6 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-export { getCurrentDate };
+const projects = [];
+
+export { getCurrentDate, projects };
