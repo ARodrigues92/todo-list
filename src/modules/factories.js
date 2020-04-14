@@ -1,23 +1,22 @@
-const projectFactory = (iId, iTitle, iDescription, iCreationDate, iDueDate) => {
+const projectFactory = (iTitle, iDescription, iCreationDate, iDueDate) => {
   // Private Data
   const toDoItems = [];
-  const id = iId;
   let title = iTitle;
   let description = iDescription;
   const creationDate = iCreationDate;
   let dueDate = iDueDate;
 
   // Public Methods
-  const addTask = item => {
+  const addToDo = item => {
     toDoItems.push(item);
   };
 
-  const removeTask = item => {
+  const removeToDo = item => {
     toDoItems.splice(item, 1);
   };
 
   const getProjectData = () => {
-    return { id, title, description, creationDate, dueDate };
+    return { title, description, creationDate, dueDate, toDoItems };
   };
 
   const setProjectData = (newTitle, newDescription, newDueDate) => {
@@ -26,15 +25,10 @@ const projectFactory = (iId, iTitle, iDescription, iCreationDate, iDueDate) => {
     dueDate = newDueDate;
   };
 
-  const getToDos = () => {
-    return toDoItems;
-  };
-
-  return { addTask, removeTask, getProjectData, setProjectData, getToDos };
+  return { addToDo, removeToDo, getProjectData, setProjectData };
 };
 
 const toDoFactorty = (
-  iId,
   iTitle,
   iDescription,
   iCreationDate,
@@ -44,7 +38,6 @@ const toDoFactorty = (
   iComplete = false
 ) => {
   // Private Data
-  const id = iId;
   let title = iTitle;
   let description = iDescription;
   const creationDate = iCreationDate;
@@ -56,7 +49,6 @@ const toDoFactorty = (
   // Public Methods
   const getToDoData = () => {
     return {
-      id,
       title,
       description,
       creationDate,
