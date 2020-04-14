@@ -54,56 +54,66 @@ model.projects.push(project2);
 const addProject = document.getElementById('add-project');
 const addToDo = document.getElementById('add-todo');
 
-const form = document.getElementById('form');
-const submit = document.getElementById('submit');
+const createSubmitEventListener = (purpose, type) => {
+  const submit = document.getElementById('submit');
+  const form = document.getElementById('form');
+
+  submit.addEventListener('click', e => {
+    e.preventDefault();
+
+    const title = form.elements[0].value;
+    const description = form.elements[1].value;
+    const creationDate = model.getCurrentDate();
+    const dueDate = form.elements[2].value;
+
+    if (!title) {
+      alert('The title field is mandatory');
+    } else {
+      if (type === 'project') {
+        if (purpose === 'create') {
+          const newProject = factories.projectFactory(
+            1, // temp hardcoded id
+            title,
+            description,
+            creationDate,
+            dueDate
+          );
+          console.log(newProject.getProjectData());
+        } else {
+          // set new values for object properties
+        }
+      } else if (type === 'todo') {
+        if (purpose === 'create') {
+          const priority = form.elements[3].value;
+          const notes = form.elements[4].value;
+
+          const newTodo = factories.toDoFactorty(
+            1, // temp hardcoded id
+            title,
+            description,
+            creationDate,
+            dueDate,
+            priority,
+            notes
+          );
+          console.log(newTodo.getToDoData());
+        } else {
+          // set new values for object properties
+        }
+      }
+      view.clearForm();
+    }
+  });
+};
 
 addProject.addEventListener('click', () => {
-  view.displayProjectForm();
-  submit.setAttribute('data-type', 'project');
+  view.displayForm('project');
+  createSubmitEventListener('create', 'project');
 });
 
 addToDo.addEventListener('click', () => {
-  view.displayTodoForm();
-  submit.setAttribute('data-type', 'todo');
-});
-
-submit.addEventListener('click', e => {
-  e.preventDefault();
-
-  const title = form.elements[0].value;
-  const description = form.elements[1].value;
-  const creationDate = model.getCurrentDate();
-  const dueDate = form.elements[2].value;
-  const priority = form.elements[3].value;
-  const notes = form.elements[4].value;
-
-  if (!title) {
-    alert('The title field is mandatory');
-  } else {
-    if (submit.getAttribute('data-type') === 'project') {
-      const newProject = factories.projectFactory(
-        1, // temp hardcoded id
-        title,
-        description,
-        creationDate,
-        dueDate
-      );
-      console.log(newProject.getProjectData());
-    } else {
-      const newTodo = factories.toDoFactorty(
-        1, // temp hardcoded id
-        title,
-        description,
-        creationDate,
-        dueDate,
-        priority,
-        notes
-      );
-      console.log(newTodo.getTodoData());
-    }
-    form.reset();
-    view.resetFormDisplay();
-  }
+  view.displayForm('todo');
+  createSubmitEventListener('create', 'todo');
 });
 
 model.projects.forEach(project => {
@@ -111,6 +121,8 @@ model.projects.forEach(project => {
 
   projectDiv.addEventListener('click', () => {
     view.resetViewArea();
+    view.hide(addProject);
+    view.show(addToDo);
 
     const toDos = project.getToDos();
 
