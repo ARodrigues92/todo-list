@@ -88,10 +88,10 @@ const expandToDo = toDo => {
   const notesP = document.createElement('p');
 
   titleP.innerText = `Title: ${toDo.title}`;
-  descriptionP.innerText = `Title: ${toDo.description}`;
-  creationP.innnerText = `Title: ${toDo.creationDate}`;
+  descriptionP.innerText = `Description: ${toDo.description}`;
+  creationP.innerText = `Creation Date: ${toDo.creationDate}`;
   dueP.innerText = `Due date: ${toDo.dueDate}`;
-  priorityP.innerText = `Due date: ${toDo.dueDate}`;
+  priorityP.innerText = `Priority: ${toDo.priority}`;
   notesP.innerText = `Notes: ${toDo.notes}`;
 
   newDiv.append(titleP, descriptionP, creationP, dueP, priorityP, notesP);
