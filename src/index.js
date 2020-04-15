@@ -7,33 +7,6 @@ import * as model from './modules/model';
 const addProject = document.getElementById('add-project');
 const addToDo = document.getElementById('add-todo');
 
-const renderProjects = () => {
-  view.resetViewArea();
-  const keys = Object.keys(localStorage);
-
-  keys.forEach(key => {
-    const object = JSON.parse(localStorage.getItem(key));
-    const projectDiv = view.renderProject(object);
-
-    projectDiv.addEventListener('click', () => {
-      view.resetViewArea();
-      view.hide(addProject);
-      view.show(addToDo);
-
-      const toDos = object.toDoItems;
-
-      toDos.forEach(toDo => {
-        const toDoDiv = view.renderToDo(toDo);
-
-        toDoDiv.addEventListener('click', () => {
-          view.resetViewArea();
-          view.expandToDo(toDo);
-        });
-      });
-    });
-  });
-};
-
 const createSubmitEventListener = (purpose, type) => {
   const submit = document.getElementById('submit');
   const form = document.getElementById('form');
@@ -58,6 +31,7 @@ const createSubmitEventListener = (purpose, type) => {
             dueDate
           );
           model.saveObject(newProject.getProjectData());
+          view.renderProjects();
         } else {
           // set new values for object properties
         }
@@ -74,13 +48,17 @@ const createSubmitEventListener = (purpose, type) => {
             priority,
             notes
           );
-          console.log(newTodo.getToDoData());
+
+          const projectID = addToDo.getAttribute('data-project');
+          const project = JSON.parse(localStorage.getItem(projectID));
+          project.toDoItems.push(newTodo.getToDoData());
+          localStorage.setItem(projectID, JSON.stringify(project));
+          view.renderToDos(projectID, project);
         } else {
           // set new values for object properties
         }
       }
       view.clearForm();
-      renderProjects();
     }
   });
 };
@@ -95,4 +73,4 @@ addToDo.addEventListener('click', () => {
   createSubmitEventListener('create', 'todo');
 });
 
-renderProjects();
+view.renderProjects();

@@ -1,4 +1,6 @@
 const displayArea = document.getElementById('display-area');
+const addProject = document.getElementById('add-project');
+const addToDo = document.getElementById('add-todo');
 
 const hide = element => {
   element.classList.add('display-none');
@@ -141,6 +143,39 @@ const renderProject = project => {
   return newDiv;
 };
 
+const renderToDos = (index, object) => {
+  resetViewArea();
+  hide(addProject);
+  show(addToDo);
+
+  addToDo.setAttribute('data-project', index);
+
+  const toDos = object.toDoItems;
+
+  toDos.forEach(toDo => {
+    const toDoDiv = renderToDo(toDo);
+
+    toDoDiv.addEventListener('click', () => {
+      resetViewArea();
+      expandToDo(toDo);
+    });
+  });
+};
+
+const renderProjects = () => {
+  resetViewArea();
+  const keys = Object.keys(localStorage);
+
+  keys.forEach(key => {
+    const object = JSON.parse(localStorage.getItem(key));
+    const projectDiv = renderProject(object);
+
+    projectDiv.addEventListener('click', () => {
+      renderToDos(key, object);
+    });
+  });
+};
+
 export {
   hide,
   show,
@@ -149,6 +184,6 @@ export {
   clearForm,
   displayForm,
   expandToDo,
-  renderToDo,
-  renderProject,
+  renderToDos,
+  renderProjects,
 };
