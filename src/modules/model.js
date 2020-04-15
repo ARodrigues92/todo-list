@@ -17,6 +17,9 @@ const getCurrentDate = () => {
   return `${year}-${month}-${day}`;
 };
 
-const projects = [];
+const saveObject = object => {
+  const id = localStorage.length;
+  localStorage.setItem(id, JSON.stringify(object));
+};
 
-export { getCurrentDate, projects };
+export { getCurrentDate, saveObject };

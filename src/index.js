@@ -4,55 +4,35 @@ import * as view from './modules/view';
 import * as factories from './modules/factories';
 import * as model from './modules/model';
 
-// Testing data
-
-const project1 = factories.projectFactory(
-  1,
-  'proj-a',
-  'desc',
-  model.getCurrentDate(),
-  model.getCurrentDate()
-);
-
-const project2 = factories.projectFactory(
-  2,
-  'proj-b',
-  'desc',
-  model.getCurrentDate(),
-  model.getCurrentDate()
-);
-
-const todo1 = factories.toDoFactorty(
-  1,
-  'todo-a',
-  'desc',
-  model.getCurrentDate(),
-  model.getCurrentDate(),
-  1,
-  'notes'
-);
-
-const todo2 = factories.toDoFactorty(
-  2,
-  'todo-b',
-  'desc',
-  model.getCurrentDate(),
-  model.getCurrentDate(),
-  1,
-  'notes'
-);
-
-project1.addTask(todo1);
-project1.addTask(todo2);
-project2.addTask(todo2);
-
-model.projects.push(project1);
-model.projects.push(project2);
-
-// End testing data
-
 const addProject = document.getElementById('add-project');
 const addToDo = document.getElementById('add-todo');
+
+const renderProjects = () => {
+  view.resetViewArea();
+  const keys = Object.keys(localStorage);
+
+  keys.forEach(key => {
+    const object = JSON.parse(localStorage.getItem(key));
+    const projectDiv = view.renderProject(object);
+
+    projectDiv.addEventListener('click', () => {
+      view.resetViewArea();
+      view.hide(addProject);
+      view.show(addToDo);
+
+      const toDos = object.toDoItems;
+
+      toDos.forEach(toDo => {
+        const toDoDiv = view.renderToDo(toDo);
+
+        toDoDiv.addEventListener('click', () => {
+          view.resetViewArea();
+          view.expandToDo(toDo);
+        });
+      });
+    });
+  });
+};
 
 const createSubmitEventListener = (purpose, type) => {
   const submit = document.getElementById('submit');
@@ -72,13 +52,12 @@ const createSubmitEventListener = (purpose, type) => {
       if (type === 'project') {
         if (purpose === 'create') {
           const newProject = factories.projectFactory(
-            1, // temp hardcoded id
             title,
             description,
             creationDate,
             dueDate
           );
-          console.log(newProject.getProjectData());
+          model.saveObject(newProject.getProjectData());
         } else {
           // set new values for object properties
         }
@@ -88,7 +67,6 @@ const createSubmitEventListener = (purpose, type) => {
           const notes = form.elements[4].value;
 
           const newTodo = factories.toDoFactorty(
-            1, // temp hardcoded id
             title,
             description,
             creationDate,
@@ -102,6 +80,7 @@ const createSubmitEventListener = (purpose, type) => {
         }
       }
       view.clearForm();
+      renderProjects();
     }
   });
 };
@@ -116,24 +95,4 @@ addToDo.addEventListener('click', () => {
   createSubmitEventListener('create', 'todo');
 });
 
-model.projects.forEach(project => {
-  const projectDiv = view.renderProject(project.getProjectData());
-
-  projectDiv.addEventListener('click', () => {
-    view.resetViewArea();
-    view.hide(addProject);
-    view.show(addToDo);
-
-    const toDos = project.getToDos();
-
-    toDos.forEach(toDo => {
-      const toDoData = toDo.getToDoData();
-      const toDoDiv = view.renderToDo(toDoData);
-
-      toDoDiv.addEventListener('click', () => {
-        view.resetViewArea();
-        view.expandToDo(toDoData);
-      });
-    });
-  });
-});
+renderProjects();
