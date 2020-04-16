@@ -141,6 +141,15 @@ const renderToDo = (objectKey, project, toDo, toDoIndex) => {
     submitForm('edit', 'toDo', objectKey, project, toDo, toDoIndex);
   });
 
+  const toggleButton = view.createButton('Toggle complete', 'toggle');
+
+  toggleButton.addEventListener('click', () => {
+    toDo.complete === true ? (toDo.complete = false) : (toDo.complete = true);
+    project.toDoItems[toDoIndex] = toDo;
+    localStorage.setItem(objectKey, JSON.stringify(project));
+    renderToDos(objectKey, project);
+  });
+
   toDoDiv.append(titleP, dueP, completeP);
 
   toDoDiv.addEventListener('click', () => {
@@ -158,7 +167,7 @@ const renderToDo = (objectKey, project, toDo, toDoIndex) => {
     expandToDo(toDo);
   });
 
-  outerDiv.append(toDoDiv, deleteButton, editButton);
+  outerDiv.append(toDoDiv, deleteButton, editButton, toggleButton);
   displayArea.append(outerDiv);
 };
 
