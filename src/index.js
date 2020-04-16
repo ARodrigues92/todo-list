@@ -7,7 +7,7 @@ import * as model from './modules/model';
 const buttonsDiv = document.getElementById('buttons-container');
 const displayArea = document.getElementById('display-area');
 
-const submitCreationForm = type => {
+const submitForm = (purpose, type, key, project, toDo, toDoIndex) => {
   const submit = document.getElementById('submit');
   const form = document.getElementById('form');
 
@@ -24,36 +24,61 @@ const submitCreationForm = type => {
       alert('The title field is mandatory');
     } else {
       if (type === 'project') {
-        const newProject = factories.projectFactory(
-          title,
-          description,
-          creationDate,
-          dueDate
-        );
-        model.saveObject(newProject.getProjectData());
-        // eslint-disable-next-line no-use-before-define
-        renderProjects();
+        if (purpose === 'create') {
+          const newProject = factories.projectFactory(
+            title,
+            description,
+            creationDate,
+            dueDate
+          );
+          model.saveObject(newProject.getProjectData());
+          // eslint-disable-next-line no-use-before-define
+          renderProjects();
+        } else if (purpose === 'edit') {
+          project.title = title;
+          project.description = description;
+          project.dueDate = dueDate;
+
+          localStorage.setItem(key, JSON.stringify(project));
+          renderProjects();
+        }
       } else if (type === 'toDo') {
-        const priority = form.elements[3].value;
-        const notes = form.elements[4].value;
+        if (purpose === 'create') {
+          const priority = form.elements[3].value;
+          const notes = form.elements[4].value;
 
-        const newTodo = factories.toDoFactorty(
-          title,
-          description,
-          creationDate,
-          dueDate,
-          priority,
-          notes
-        );
+          const newTodo = factories.toDoFactorty(
+            title,
+            description,
+            creationDate,
+            dueDate,
+            priority,
+            notes
+          );
 
-        const projectID = document
-          .getElementById('add')
-          .getAttribute('data-project');
-        const project = JSON.parse(localStorage.getItem(projectID));
-        project.toDoItems.push(newTodo.getToDoData());
-        localStorage.setItem(projectID, JSON.stringify(project));
-        // eslint-disable-next-line no-use-before-define
-        renderToDos(projectID, project);
+          const projectID = document
+            .getElementById('add')
+            .getAttribute('data-project');
+          const project = JSON.parse(localStorage.getItem(projectID));
+          project.toDoItems.push(newTodo.getToDoData());
+          localStorage.setItem(projectID, JSON.stringify(project));
+          // eslint-disable-next-line no-use-before-define
+          renderToDos(projectID, project);
+        } else if (purpose === 'edit') {
+          const priority = form.elements[3].value;
+          const notes = form.elements[4].value;
+
+          toDo.title = title;
+          toDo.description = description;
+          toDo.dueDate = dueDate;
+          toDo.priority = priority;
+          toDo.notes = notes;
+
+          project.toDoItems[toDoIndex] = toDo;
+
+          localStorage.setItem(key, JSON.stringify(project));
+          renderToDos(key, project);
+        }
       }
       view.clearForm();
     }
@@ -109,6 +134,13 @@ const renderToDo = (objectKey, project, toDo, toDoIndex) => {
     renderToDos(objectKey, project);
   });
 
+  const editButton = view.createButton('Edit', 'edit');
+
+  editButton.addEventListener('click', () => {
+    view.displayForm('toDo');
+    submitForm('edit', 'toDo', objectKey, project, toDo, toDoIndex);
+  });
+
   toDoDiv.append(titleP, dueP, completeP);
 
   toDoDiv.addEventListener('click', () => {
@@ -126,7 +158,7 @@ const renderToDo = (objectKey, project, toDo, toDoIndex) => {
     expandToDo(toDo);
   });
 
-  outerDiv.append(toDoDiv, deleteButton);
+  outerDiv.append(toDoDiv, deleteButton, editButton);
   displayArea.append(outerDiv);
 };
 
@@ -146,7 +178,7 @@ const renderToDos = (key, object) => {
 
   addButton.addEventListener('click', () => {
     view.displayForm('toDo');
-    submitCreationForm('toDo');
+    submitForm('create', 'toDo');
   });
 
   buttonsDiv.append(toDoBackButton, addButton);
@@ -187,7 +219,14 @@ const renderProject = (key, project) => {
     renderProjects();
   });
 
-  outerDiv.append(projectDiv, deleteButton);
+  const editButton = view.createButton('Edit', 'edit');
+
+  editButton.addEventListener('click', () => {
+    view.displayForm(project);
+    submitForm('edit', 'project', key, project);
+  });
+
+  outerDiv.append(projectDiv, deleteButton, editButton);
   displayArea.append(outerDiv);
 };
 
@@ -199,7 +238,7 @@ const renderProjects = () => {
 
   addButton.addEventListener('click', () => {
     view.displayForm('project');
-    submitCreationForm('project');
+    submitForm('create', 'project');
   });
 
   buttonsDiv.append(addButton);
