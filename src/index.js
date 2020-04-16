@@ -5,6 +5,7 @@ import * as factories from './modules/factories';
 import * as model from './modules/model';
 
 const buttonsDiv = document.getElementById('buttons-container');
+const displayArea = document.getElementById('display-area');
 
 const submitCreationForm = type => {
   const submit = document.getElementById('submit');
@@ -59,6 +60,76 @@ const submitCreationForm = type => {
   });
 };
 
+const expandToDo = toDo => {
+  const newDiv = document.createElement('div');
+  newDiv.classList.add('box');
+
+  const titleP = document.createElement('p');
+  const descriptionP = document.createElement('p');
+  const creationP = document.createElement('p');
+  const dueP = document.createElement('p');
+  const priorityP = document.createElement('p');
+  const notesP = document.createElement('p');
+
+  titleP.innerText = `Title: ${toDo.title}`;
+  descriptionP.innerText = `Description: ${toDo.description}`;
+  creationP.innerText = `Creation Date: ${toDo.creationDate}`;
+  dueP.innerText = `Due date: ${toDo.dueDate}`;
+  priorityP.innerText = `Priority: ${toDo.priority}`;
+  notesP.innerText = `Notes: ${toDo.notes}`;
+
+  newDiv.append(titleP, descriptionP, creationP, dueP, priorityP, notesP);
+  displayArea.append(newDiv);
+};
+
+const renderToDo = (objectKey, project, toDo, toDoIndex) => {
+  const outerDiv = document.createElement('div');
+  const toDoDiv = document.createElement('div');
+  toDoDiv.classList.add('box');
+
+  const titleP = document.createElement('p');
+  const dueP = document.createElement('p');
+  const completeP = document.createElement('p');
+
+  titleP.innerText = `Title: ${toDo.title}`;
+  dueP.innerText = `Due date: ${toDo.dueDate}`;
+
+  if (toDo.complete) {
+    completeP.innerText = 'Completed: Yes';
+  } else {
+    completeP.innerText = 'Completed: No';
+  }
+
+  const deleteButton = view.createButton('Delete', 'delete');
+
+  deleteButton.addEventListener('click', () => {
+    project.toDoItems.splice(toDoIndex, 1);
+    localStorage.setItem(objectKey, JSON.stringify(project));
+    // eslint-disable-next-line no-use-before-define
+    renderToDos(objectKey, project);
+  });
+
+  toDoDiv.append(titleP, dueP, completeP);
+
+  toDoDiv.addEventListener('click', () => {
+    buttonsDiv.innerHTML = '';
+    const expandBackButton = view.createButton('Back', 'back');
+
+    expandBackButton.addEventListener('click', () => {
+      // eslint-disable-next-line no-use-before-define
+      renderToDos(objectKey, project);
+    });
+
+    buttonsDiv.append(expandBackButton);
+
+    view.resetViewArea();
+    expandToDo(toDo);
+  });
+
+  outerDiv.append(toDoDiv, deleteButton);
+  displayArea.append(outerDiv);
+};
+
 const renderToDos = (key, object) => {
   view.resetViewArea();
   buttonsDiv.innerHTML = '';
@@ -82,23 +153,42 @@ const renderToDos = (key, object) => {
 
   const toDos = object.toDoItems;
 
-  toDos.forEach(toDo => {
-    const toDoDiv = view.renderToDo(toDo);
-
-    toDoDiv.addEventListener('click', () => {
-      buttonsDiv.innerHTML = '';
-      const expandBackButton = view.createButton('Back', 'back');
-
-      expandBackButton.addEventListener('click', () => {
-        renderToDos(key, object);
-      });
-
-      buttonsDiv.append(expandBackButton);
-
-      view.resetViewArea();
-      view.expandToDo(toDo);
-    });
+  toDos.forEach((toDo, index) => {
+    renderToDo(key, object, toDo, index);
   });
+};
+
+const renderProject = (key, project) => {
+  const outerDiv = document.createElement('div');
+  const projectDiv = document.createElement('div');
+  projectDiv.classList.add('box');
+
+  const titleP = document.createElement('p');
+  const descriptionP = document.createElement('p');
+  const creationP = document.createElement('p');
+  const dueP = document.createElement('p');
+
+  titleP.innerText = `Title: ${project.title}`;
+  descriptionP.innerText = `Description: ${project.description}`;
+  creationP.innerText = `Creation date: ${project.creationDate}`;
+  dueP.innerText = `Due date: ${project.dueDate}`;
+
+  projectDiv.append(titleP, descriptionP, creationP, dueP);
+
+  projectDiv.addEventListener('click', () => {
+    renderToDos(key, project);
+  });
+
+  const deleteButton = view.createButton('Delete', 'delete');
+
+  deleteButton.addEventListener('click', () => {
+    localStorage.removeItem(key);
+    // eslint-disable-next-line no-use-before-define
+    renderProjects();
+  });
+
+  outerDiv.append(projectDiv, deleteButton);
+  displayArea.append(outerDiv);
 };
 
 const renderProjects = () => {
@@ -118,11 +208,7 @@ const renderProjects = () => {
 
   keys.forEach(key => {
     const object = JSON.parse(localStorage.getItem(key));
-    const projectDiv = view.renderProject(object);
-
-    projectDiv.addEventListener('click', () => {
-      renderToDos(key, object);
-    });
+    renderProject(key, object);
   });
 };
 
