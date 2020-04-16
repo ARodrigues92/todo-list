@@ -1,14 +1,4 @@
 const displayArea = document.getElementById('display-area');
-const addProject = document.getElementById('add-project');
-const addToDo = document.getElementById('add-todo');
-
-const hide = element => {
-  element.classList.add('display-none');
-};
-
-const show = element => {
-  element.classList.remove('display-none');
-};
 
 const resetViewArea = () => {
   displayArea.innerHTML = '';
@@ -54,7 +44,7 @@ const displayForm = type => {
   form.append(createInputBlock('description', 'text', 'Description:'));
   form.append(createInputBlock('due-date', 'date', 'Due date:'));
 
-  if (type === 'todo') {
+  if (type === 'toDo') {
     form.append(
       createInputBlock('priority', 'number', 'Priority:', {
         min: 1,
@@ -76,6 +66,14 @@ const displayForm = type => {
   setAttributes(submit, { type: 'submit', id: 'submit', value: 'Submit' });
   form.append(submit);
   formDiv.append(form);
+};
+
+const createButton = (text, id) => {
+  const button = document.createElement('button');
+  button.innerText = text;
+  button.setAttribute('id', id);
+
+  return button;
 };
 
 const expandToDo = toDo => {
@@ -143,47 +141,12 @@ const renderProject = project => {
   return newDiv;
 };
 
-const renderToDos = (index, object) => {
-  resetViewArea();
-  hide(addProject);
-  show(addToDo);
-
-  addToDo.setAttribute('data-project', index);
-
-  const toDos = object.toDoItems;
-
-  toDos.forEach(toDo => {
-    const toDoDiv = renderToDo(toDo);
-
-    toDoDiv.addEventListener('click', () => {
-      resetViewArea();
-      expandToDo(toDo);
-    });
-  });
-};
-
-const renderProjects = () => {
-  resetViewArea();
-  const keys = Object.keys(localStorage);
-
-  keys.forEach(key => {
-    const object = JSON.parse(localStorage.getItem(key));
-    const projectDiv = renderProject(object);
-
-    projectDiv.addEventListener('click', () => {
-      renderToDos(key, object);
-    });
-  });
-};
-
 export {
-  hide,
-  show,
   resetViewArea,
-  setAttributes,
   clearForm,
   displayForm,
+  createButton,
   expandToDo,
-  renderToDos,
-  renderProjects,
+  renderToDo,
+  renderProject,
 };
