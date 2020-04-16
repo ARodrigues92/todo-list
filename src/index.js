@@ -125,6 +125,14 @@ const renderToDo = (objectKey, project, toDo, toDoIndex) => {
     completeP.innerText = 'Completed: No';
   }
 
+  if (toDo.priority === '1') {
+    toDoDiv.style.backgroundColor = 'red';
+  } else if (toDo.priority === '2') {
+    toDoDiv.style.backgroundColor = 'orange';
+  } else {
+    toDoDiv.style.backgroundColor = 'green';
+  }
+
   const deleteButton = view.createButton('Delete', 'delete');
 
   deleteButton.addEventListener('click', () => {
