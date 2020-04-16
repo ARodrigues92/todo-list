@@ -61,17 +61,24 @@ const submitCreationForm = type => {
 
 const renderToDos = (key, object) => {
   view.resetViewArea();
-  const addButton = document.getElementById('add');
-  addButton.parentNode.removeChild(addButton);
-  const newAddButton = view.createButton('Add to-do', 'add');
-  newAddButton.setAttribute('data-project', key);
+  buttonsDiv.innerHTML = '';
 
-  newAddButton.addEventListener('click', () => {
+  const toDoBackButton = view.createButton('Back', 'back');
+
+  toDoBackButton.addEventListener('click', () => {
+    // eslint-disable-next-line no-use-before-define
+    renderProjects();
+  });
+
+  const addButton = view.createButton('Add to-do', 'add');
+  addButton.setAttribute('data-project', key);
+
+  addButton.addEventListener('click', () => {
     view.displayForm('toDo');
     submitCreationForm('toDo');
   });
 
-  buttonsDiv.append(newAddButton);
+  buttonsDiv.append(toDoBackButton, addButton);
 
   const toDos = object.toDoItems;
 
@@ -79,6 +86,15 @@ const renderToDos = (key, object) => {
     const toDoDiv = view.renderToDo(toDo);
 
     toDoDiv.addEventListener('click', () => {
+      buttonsDiv.innerHTML = '';
+      const expandBackButton = view.createButton('Back', 'back');
+
+      expandBackButton.addEventListener('click', () => {
+        renderToDos(key, object);
+      });
+
+      buttonsDiv.append(expandBackButton);
+
       view.resetViewArea();
       view.expandToDo(toDo);
     });
