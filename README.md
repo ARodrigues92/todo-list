@@ -7,3 +7,5 @@
 The app meets all main functionality requirements of the project,
 but the code organization is absolutely atrocious and does not meet
 the said requirements.
+
+## [Refactored](https://github.com/ARodrigues92/todo-list-refactor)
